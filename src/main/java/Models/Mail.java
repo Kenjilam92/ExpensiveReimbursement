@@ -1,12 +1,21 @@
 package Models;
+import javax.persistence.*;
 
+@Entity
 public class Mail {
 	private static long autoId = 0;
+	@Id
+	@GeneratedValue(strategy= GenerationType.IDENTITY)
+	@Column (name="MAIL_ID", columnDefinition="serial primary key")
 	protected long mailId;
-	protected int senderId;
-	protected int receiverId;
+	@OneToOne( cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+	@JoinColumn(name="SENDER_ID", referencedColumnName="USER_NAME", columnDefinition="CHAR")
+	protected String senderId;
+	@OneToOne( cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+	@JoinColumn(name="RECEIVER_ID", referencedColumnName="USER_NAME", columnDefinition="CHAR")
+	protected String receiverId;
 	protected String content;
-	public Mail (int sender, int reciever, String cont) {
+	public Mail (String sender, String reciever, String cont) {
 		senderId = sender;
 		receiverId = reciever;
 		content = cont;
@@ -14,10 +23,10 @@ public class Mail {
 		mailId = autoId;
 	}
 	
-	public int getSender() {
+	public String getSender() {
 		return senderId;
 	}
-	public int getReceiver () {
+	public String getReceiver () {
 		return receiverId; 
 	}
 	public String getContent() {

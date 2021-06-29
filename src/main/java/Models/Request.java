@@ -13,8 +13,8 @@ public class Request {
 	private long requestId;
 	
 	@OneToOne( cascade = CascadeType.ALL, fetch = FetchType.EAGER )
-	@JoinColumn( name = "AUTHOR", referencedColumnName = "AUTHOR_ID", columnDefinition = "INT")
-	private int authorId;
+	@JoinColumn( name = "AUTHOR", referencedColumnName = "AUTHOR_ID", columnDefinition = "CHAR")
+	private String authorId;
 	@Column (name="IS_APPROVED")
 	private boolean isApproved;
 	@Column (name="COST")
@@ -23,7 +23,7 @@ public class Request {
 	private String content;
 	
 	
-	public Request(int id, double price, String cont){
+	public Request(String id, double price, String cont){
 		isApproved = false;
 		cost = price;
 		content = cont;
@@ -36,7 +36,7 @@ public class Request {
 		return requestId;
 	}
 	
-	public int getAuthorId() {
+	public String getAuthorId() {
 		return authorId;
 	}
 	public boolean getIsApprove() {
