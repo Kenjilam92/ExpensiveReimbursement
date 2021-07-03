@@ -4,17 +4,22 @@ import javax.persistence.*;
 
 @Entity
 public class Request {
-	private static long autoId = 0;
+	public Request() {
+		super();
+	}
 	
 	@Id
-	@GeneratedValue(strategy= GenerationType.IDENTITY )
-	
-	@Column( name="REQUEST_ID", columnDefinition ="serial primary key")
+//	@GeneratedValue(strategy= GenerationType.IDENTITY)
+	@SequenceGenerator(name="requestSeq", sequenceName="hibernate_sequence_1",allocationSize = 1)
+	@GeneratedValue(strategy= GenerationType.SEQUENCE, generator ="requestSeq")
+    
+	@Column( name="REQUEST_ID")
 	private long requestId;
 	
-	@OneToOne( cascade = CascadeType.ALL, fetch = FetchType.EAGER )
-	@JoinColumn( name = "AUTHOR", referencedColumnName = "AUTHOR_ID", columnDefinition = "CHAR")
-	private String authorId;
+	@ManyToOne( cascade = CascadeType.ALL, fetch = FetchType.EAGER )
+	@JoinColumn( name = "AUTHOR", referencedColumnName = "USER_ID", columnDefinition = "INT")
+	private User author;
+	
 	@Column (name="IS_APPROVED")
 	private boolean isApproved;
 	@Column (name="COST")
@@ -23,21 +28,19 @@ public class Request {
 	private String content;
 	
 	
-	public Request(String id, double price, String cont){
+	public Request(User e, double price, String cont){
 		isApproved = false;
 		cost = price;
 		content = cont;
-		authorId = id;
-		autoId++;
-		requestId = autoId;
+		author = e;
 	}
 	
 	public long getRequestId() {
 		return requestId;
 	}
 	
-	public String getAuthorId() {
-		return authorId;
+	public User getAuthor() {
+		return author;
 	}
 	public boolean getIsApprove() {
 		return isApproved;
@@ -47,5 +50,9 @@ public class Request {
 	}
 	public double getCost() {
 		return cost;
+	}
+	@Override
+	public String toString() {
+		return author.userName+ " requested $"+cost+ " for " + content;
 	}
 }

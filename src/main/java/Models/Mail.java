@@ -3,33 +3,43 @@ import javax.persistence.*;
 
 @Entity
 public class Mail {
-	private static long autoId = 0;
+	public Mail() {
+		super();
+	}	
 	@Id
-	@GeneratedValue(strategy= GenerationType.IDENTITY)
-	@Column (name="MAIL_ID", columnDefinition="serial primary key")
+//	@GeneratedValue(strategy= GenerationType.IDENTITY)
+	@SequenceGenerator(name="mailSeq", sequenceName="hibernate_sequence_2",allocationSize = 1)
+	@GeneratedValue(strategy= GenerationType.SEQUENCE, generator ="mailSeq")    
+    @Column (name="MAIL_ID")
 	protected long mailId;
 	@OneToOne( cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-	@JoinColumn(name="SENDER_ID", referencedColumnName="USER_NAME", columnDefinition="CHAR")
-	protected String senderId;
+	@JoinColumn(name="SENDER", referencedColumnName="USER_ID", columnDefinition="INT")
+	protected User sender;
 	@OneToOne( cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-	@JoinColumn(name="RECEIVER_ID", referencedColumnName="USER_NAME", columnDefinition="CHAR")
-	protected String receiverId;
+	@JoinColumn(name="RECEIVER", referencedColumnName="USER_ID", columnDefinition="INT")
+	protected User receiver;
+	@Column (name="CONTENT")
 	protected String content;
-	public Mail (String sender, String reciever, String cont) {
-		senderId = sender;
-		receiverId = reciever;
+	public Mail (User s, User r, String cont) {
+		sender = s;
+		receiver = r;
 		content = cont;
-		autoId++;
-		mailId = autoId;
 	}
 	
-	public String getSender() {
-		return senderId;
+	public User getSender() {
+		return sender;
 	}
-	public String getReceiver () {
-		return receiverId; 
+	public User getReceiver () {
+		return receiver; 
 	}
 	public String getContent() {
 		return content;
+	}
+	
+	@Override
+	public String toString() {
+		return 	"Sender: "+sender.userName+ "\n" +
+				"Receiver: "+ receiver.userName + "\n"+
+				"Content: "+ content;
 	}
 }

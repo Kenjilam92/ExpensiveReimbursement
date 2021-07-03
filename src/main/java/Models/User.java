@@ -5,27 +5,38 @@ import javax.persistence.*;
 
 @Entity
 @Inheritance (strategy = InheritanceType.SINGLE_TABLE) 
+//@MappedSuperclass
+@Table(name ="USER_TEST")
 public class User {
+	public User() {
+		super();
+	}
 	@Id
-	@Column(name="USER_NAME", columnDefinition="serial primary key")
+	@SequenceGenerator(name="userIdSeq", sequenceName="hibernate_sequence", allocationSize = 1)
+	@GeneratedValue(strategy= GenerationType.SEQUENCE, generator ="userIdSeq")
+    @Column(name="USER_ID")
+	protected long userId; 
+	@Column(name="USER_NAME")
 	protected String userName;
 	@Column(name="PASSWORD")
 	protected String password;
+
 	@Column(name="EMAIL")
 	protected String email;
 	@Column(name="FIRST_NAME")
 	protected String firstName;
 	@Column(name="LAST_NAME")
 	protected String lastName;
-	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-	@JoinColumn(name="MAILBOX", referencedColumnName = "MAIL_ID", columnDefinition = "INT" )
-	protected ArrayList<Mail> mailbox;
 	
+	
+	protected static long autoId = 0;
 	
 	public User (String userN, String em, String pass) {
 		userName = userN;
 		password = pass;
 		email = em;
+		firstName = "";
+		lastName = "";
 	}
 	
 	public User (String uN, String em, String pw, String fn, String ln) {
@@ -33,7 +44,7 @@ public class User {
 		firstName = fn;
 		lastName = ln;
 	}
-		
+	
 	public String getUserName() {
 		return userName;
 	}
@@ -50,8 +61,9 @@ public class User {
 		return lastName;
 	}
 	
-	public ArrayList<Mail> getMailbox(){
-		return mailbox;
+	@Override
+	public String toString() {
+		return this.getClass().getName() + " {"+userId+", "+ userName + ", "+ password + ", "+ firstName+ ", "+ lastName+ ", "+ email+"}"  ;
 	}
 }
 
