@@ -5,7 +5,7 @@ import java.io.IOException;
 import java.util.*;
 import javax.servlet.http.*;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.gson.Gson;
+
 
 import tools.*;
 import Database.*;
@@ -36,10 +36,14 @@ public class UserAPI extends HttpServlet implements Print {
 				text.append(u.toJson()+",");	
 			}
 			text.append("],");
+			
+			// this element to confirm data connected
+			
 			text.append("\"connected\" : true");
-		// this el	
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
+			
+			// this will report what happened at the backend and show to frontend 
+			
 			e.printStackTrace();
 			text.append("\"stackTrace\": \"");
 			text.append(e.getStackTrace().toString()+"\",");

@@ -18,6 +18,8 @@ import javax.persistence.criteria.Root;
 
 public class Database {
 	private static Database database = new Database();
+	
+	
 	private SessionFactory sessionFactory;
 	private Database() {
 		final Configuration config = new Configuration().configure();
@@ -30,7 +32,8 @@ public class Database {
 	}
 	
 	
-	///Read 
+	///Show All elements
+	
 	public List<User> getAllUsers() throws Exception {
 		List<User> users;
 		try{
