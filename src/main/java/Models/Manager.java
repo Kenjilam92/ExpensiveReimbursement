@@ -8,6 +8,7 @@ import javax.persistence.PrimaryKeyJoinColumn;
 import javax.persistence.Table;
 
 @Entity
+@Table(name="MANAGERS")
 public class Manager extends Employee{
 	@Column( name = "TEAM_SIZE")
 	protected int teamSize = 5;

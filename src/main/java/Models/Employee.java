@@ -5,7 +5,7 @@ import javax.persistence.*;
 
 
 @Entity
-//@Table(name="EMPLOYEE")
+@Table(name="EMPLOYEES")
 //@PrimaryKeyJoinColumn(name="USER_ID")
 public class Employee extends User{
 	
@@ -39,5 +39,18 @@ public class Employee extends User{
 	@Override
 	public String toString() {
 		return this.getClass().getName() +" , " + userId + " { " + userName + " : " + leader.firstName + " }";
+	}
+	
+	@Override
+	public String toJson() {
+		return "{ "
+				+ "\"userId\" : " + userId + ","
+				+ "\"userName\" :" + "\"" + userName + "\","
+//				+ "\"password\" :" + "\"" + password + "\","
+				+ "\"email\" :" + "\"" + email + "\","
+				+ "\"firstName\" :" + "\"" + firstName + "\","
+				+ "\"lastName\" :" + "\"" + lastName + "\","
+				+ "\"leader\" : "+ leader.userId + ","
+				+ "}";
 	}
 }

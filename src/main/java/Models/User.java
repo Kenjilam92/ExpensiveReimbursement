@@ -4,9 +4,9 @@ import java.util.*;
 import javax.persistence.*;
 
 @Entity
-@Inheritance (strategy = InheritanceType.SINGLE_TABLE) 
+@Inheritance (strategy = InheritanceType.TABLE_PER_CLASS) 
 //@MappedSuperclass
-@Table(name ="USER_TEST")
+@Table(name ="USERS_TEST")
 public class User {
 	public User() {
 		super();
@@ -63,8 +63,20 @@ public class User {
 	
 	@Override
 	public String toString() {
-		return this.getClass().getName() + " {"+userId+", "+ userName + ", "+ password + ", "+ firstName+ ", "+ lastName+ ", "+ email+"}"  ;
+		return 	this.getClass().getName() + " {"+userId+", "+ userName + ", "+ password + ", "+ firstName+ ", "+ lastName+ ", "+ email+"}"  ;
 	}
+	
+	public String toJson() {
+		return "{ "
+				+ "\"userId\" : " + userId + ","
+				+ "\"userName\" :" + "\"" + userName + "\","
+//				+ "\"password\" :" + "\"" + password + "\","
+				+ "\"email\" :" + "\"" + email + "\","
+				+ "\"firstName\" :" + "\"" + firstName + "\","
+				+ "\"lastName\" :" + "\"" + lastName + "\""
+				+ "}";
+	}
+	
 }
 
 

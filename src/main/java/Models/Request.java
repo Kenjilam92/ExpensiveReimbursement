@@ -3,6 +3,7 @@ import javax.persistence.*;
 
 
 @Entity
+@Table(name="REQUESTS")
 public class Request {
 	public Request() {
 		super();

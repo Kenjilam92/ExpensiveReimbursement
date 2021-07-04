@@ -3,12 +3,22 @@ package Database;
 import org.hibernate.*;
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 import org.hibernate.cfg.Configuration;
+
+
 import Models.*;
 import java.util.*;
 
+import javax.persistence.TypedQuery;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Root;
+
+
+
+
 public class Database {
 	private static Database database = new Database();
-	private static SessionFactory sessionFactory;
+	private SessionFactory sessionFactory;
 	private Database() {
 		final Configuration config = new Configuration().configure();
 		final StandardServiceRegistryBuilder builder = new StandardServiceRegistryBuilder().applySettings(config.getProperties());
@@ -27,6 +37,9 @@ public class Database {
 			Session session = sessionFactory.openSession();
 			Transaction tx = session.beginTransaction();
 			users = session.createCriteria(User.class).list();
+
+			
+			System.out.println(users.size());
 			tx.commit();
 			session.close();
 		}
@@ -228,6 +241,12 @@ public class Database {
 		return this;
 	}
 	
-	
-	
+//	private static <T> List<T> loadAllData(Class<T> type, Session session) {
+//	    CriteriaBuilder builder = session.getCriteriaBuilder();
+//	    CriteriaQuery<T> criteria = builder.createQuery(type);
+//	    criteria.from(type);
+//	    List<T> data = session.createQuery(criteria).getResultList();
+//	    return data;
+//	 }
+//	
 }

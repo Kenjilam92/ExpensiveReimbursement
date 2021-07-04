@@ -19,8 +19,8 @@
           - create-drop - create at startup and drop at shutdown
           - update - only update schema diffs
           - none - default, don't do it
-         -->
          <property name="hibernate.hbm2ddl.auto">create</property>
+         -->
         <mapping class="Models.Request"/>
         <mapping class="Models.Mail"/>
         <mapping class="Models.User"/>

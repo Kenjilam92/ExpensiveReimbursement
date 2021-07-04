@@ -2,6 +2,7 @@ package Models;
 import javax.persistence.*;
 
 @Entity
+@Table(name="MAILS")
 public class Mail {
 	public Mail() {
 		super();
