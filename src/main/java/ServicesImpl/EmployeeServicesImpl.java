@@ -53,26 +53,13 @@ public class EmployeeServicesImpl implements UserServices,EmployeeServices {
 	@Override
 	public Employee login(String in, String pw) {
 		// TODO Auto-generated method stub
-		try {
-			List<Employee> employees = data.getAllEmployees();
-			System.out.println(employees.size());
-			for (Employee temp : employees) {
-				if(
-						( temp.getUserName().equals(in) && temp.getPassword().equals(pw) ) 
+		return data.employees.stream()
+				.filter(e -> 
+						(e.getUserName().equals(in) && e.getPassword().equals(pw))
 						||
-						( temp.getEmail().equals(in) && temp.getPassword().equals(pw) )
-				) 
-				{
-					return temp;
-				}
-			}
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
-		System.out.println("no Employee match");
-		return null;
+						(e.getEmail().equals(in) && e.getPassword().equals(pw))
+						)
+				.findFirst().orElse(null);
 	}
 
 	@Override
@@ -82,7 +69,7 @@ public class EmployeeServicesImpl implements UserServices,EmployeeServices {
 	}
 
 	@Override
-	public Mail forgotPassword(String userNameOEmail) {
+	public String forgotPassword(String userNameOEmail) {
 		// TODO Auto-generated method stub
 		
 		

@@ -19,28 +19,31 @@ public class Request {
 	
 	@ManyToOne( cascade = CascadeType.ALL, fetch = FetchType.EAGER )
 	@JoinColumn( name = "AUTHOR", referencedColumnName = "USER_ID", columnDefinition = "INT")
-	private User author;
+	private Employee author;
 	
 	@Column (name="IS_APPROVED")
 	private boolean isApproved;
+	@Column (name="IS_DENNIED")
+	private boolean isDennied;
 	@Column (name="COST")
 	private double cost;
 	@Column (name="CONTENT")
 	private String content;
 	
 	
-	public Request(User e, double price, String cont){
+	public Request(Employee e, double price, String cont){
 		isApproved = false;
+		isDennied = false;
 		cost = price;
 		content = cont;
 		author = e;
 	}
 	
-	public long getRequestId() {
+	public long getId() {
 		return requestId;
 	}
 	
-	public User getAuthor() {
+	public Employee getAuthor() {
 		return author;
 	}
 	public boolean getIsApprove() {
@@ -55,5 +58,14 @@ public class Request {
 	@Override
 	public String toString() {
 		return author.userName+ " requested $"+cost+ " for " + content;
+	}
+	
+	public String toJson() {
+		return "{"
+				+"\"requestId\" : "+requestId+","
+				+"\"author_url\" : \"/api/users?Id=\""+ author.getId() + "\""+","
+				+"\"cost\" : "+ cost+","
+				+"\"content\" : \"" + content + "\"," 
+				+ "}";
 	}
 }

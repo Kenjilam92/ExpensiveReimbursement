@@ -29,8 +29,6 @@ public class User {
 	protected String lastName;
 	
 	
-	protected static long autoId = 0;
-	
 	public User (String userN, String em, String pass) {
 		userName = userN;
 		password = pass;
@@ -43,6 +41,10 @@ public class User {
 		this(uN,em,pw);
 		firstName = fn;
 		lastName = ln;
+	}
+	
+	public long getId() {
+		return userId;
 	}
 	
 	public String getUserName() {

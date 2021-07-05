@@ -50,7 +50,7 @@ public class Employee extends User{
 				+ "\"email\" :" + "\"" + email + "\","
 				+ "\"firstName\" :" + "\"" + firstName + "\","
 				+ "\"lastName\" :" + "\"" + lastName + "\","
-				+ "\"leader\" : "+ leader.userId + ","
+				+ "\"leader_url\" : \"/api/users?Id="+ leader.userId + "\","
 				+ "}";
 	}
 }

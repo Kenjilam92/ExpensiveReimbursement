@@ -32,5 +32,17 @@ public class Manager extends Employee{
 		teamSize = size;
 	}
 	
-	
+	@Override
+	public String toJson() {
+		return "{ "
+				+ "\"userId\" : " + userId + ","
+				+ "\"userName\" :" + "\"" + userName + "\","
+//				+ "\"password\" :" + "\"" + password + "\","
+				+ "\"email\" :" + "\"" + email + "\","
+				+ "\"firstName\" :" + "\"" + firstName + "\","
+				+ "\"lastName\" :" + "\"" + lastName + "\","
+				+ "\"leader_url\" : \"/api/users?Id="+ leader.userId + "\","
+				+ "\"teamSize\" : "+ teamSize
+				+ "}";
+	}
 }

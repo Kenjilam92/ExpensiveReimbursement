@@ -1,17 +1,17 @@
 package Controllers;
-import Models.*;
 
 import java.io.IOException;
-import java.util.*;
-import javax.servlet.http.*;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import java.util.List;
 
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
-import tools.*;
-import Database.*;
+import Database.Database;
+import Database.Manipulate;
+import Models.*;
 
-public class UserAPI extends HttpServlet implements Print {
-	
+public class MailAPI extends HttpServlet{
 	/**
 	 * 
 	 */
@@ -19,7 +19,7 @@ public class UserAPI extends HttpServlet implements Print {
 	private Database data = Database.getDatabase();
 	private Manipulate manipulate = Manipulate.getInstance();
 	
-	public UserAPI() throws Exception {
+	public MailAPI() throws Exception {
 		super();
 		
 	}
@@ -27,20 +27,19 @@ public class UserAPI extends HttpServlet implements Print {
 	protected void doGet(HttpServletRequest req, HttpServletResponse res) throws IOException {
 		// preparation for the json content
 		
-		ObjectMapper om = new ObjectMapper();
 		StringBuilder text = new StringBuilder(); 
 		
 		// json file start hear 
 		text.append("{");
 		
 		if ( req.getParameterMap().containsKey("Id") ) {
-			// /api/users?Id=...
+			// /api/mail?Id=...
 			long id = Long.parseLong(req.getParameter("Id"));
-			showOneUserAPI(text,id);
+			showOneMailAPI(text,id);
 		}
 		else{
-			// /api/users/
-			showAllUsersAPI(text);
+			// /api/mails/
+			showAllMailsAPI(text);
 		}
 			
 		
@@ -48,21 +47,20 @@ public class UserAPI extends HttpServlet implements Print {
 		
 		///// start to render the json content 
 		
-		println(text);
 		res.setContentType("application/json");
 		res.setStatus(200);
 		res.getWriter().write(text.toString());
 		
 	}
 	
-	private void showAllUsersAPI (StringBuilder text) {
-		List<User> users = data.users;
+	private void showAllMailsAPI (StringBuilder text) {
+		List<Mail> mails = data.mails;
 		try {
 			// this element to confirm data connected
 			text.append("\"connected\" : true ,");
 			// this element is used to contains all user database 
 			text.append("\"data\" : [");
-			for (User u : users ) {
+			for (Mail u : mails ) {
 				text.append(u.toJson()+",");	
 			}
 			text.append("]");
@@ -72,38 +70,22 @@ public class UserAPI extends HttpServlet implements Print {
 			// this will report what happened at the backend and show to frontend 
 			
 			e.printStackTrace();
+			text.append("\"connected\" : false ,");
 			text.append("\"stackTrace\": \"");
-			text.append(e.getStackTrace().toString()+"\",");
-			text.append("\"connected\" : false");
+			text.append(e.getStackTrace().toString()+"\"");
 		}		
 		
 	}
 	
-	private void showOneUserAPI ( StringBuilder text, long id) {
-		User u = manipulate.getUser(id);
+	private void showOneMailAPI ( StringBuilder text, long id) {
+		Mail mail = manipulate.getMail(id);
 		text.append("\"connected\" : true ,");
-		if (u!=null) {
-			List<Mail> inbox = manipulate.getInboxMails(u);
-			List<Mail> sent = manipulate.getSentMails(u);
-			text.append("\"profile\" : ");
-			text.append(u.toJson()+",");	
-			
-			text.append("\"inbox\" : [");
-			for (Mail m : inbox ) {
-				text.append(m.toJson()+",");	
-			}
-			text.append("],");
-			
-			text.append("\"sent\" : [");
-			for (Mail m : sent ) {
-				text.append(m.toJson()+",");	
-			}
-			text.append("]");
+		if(mail!=null) {
+			text.append("\"mail\" : ");			
+			text.append(mail.toJson());	
 		}
 		else {
 			text.append("\"errors\" : [\"data does not exist\"]");
 		}
 	}
-	
-	
 }

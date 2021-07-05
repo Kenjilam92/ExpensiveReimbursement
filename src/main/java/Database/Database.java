@@ -4,27 +4,39 @@ import org.hibernate.*;
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 import org.hibernate.cfg.Configuration;
 
-
 import Models.*;
 import java.util.*;
-
-import javax.persistence.TypedQuery;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Root;
-
-
 
 
 public class Database {
 	private static Database database = new Database();
 	
+	public List<User> users;
+	public List<Employee> employees;
+	public List<Manager> managers;
+	public List<Mail> mails;
+	public List<Request> requests;
 	
 	private SessionFactory sessionFactory;
-	private Database() {
+	private Database(){
 		final Configuration config = new Configuration().configure();
 		final StandardServiceRegistryBuilder builder = new StandardServiceRegistryBuilder().applySettings(config.getProperties());
 		sessionFactory = config.buildSessionFactory(builder.build());
+		refreshData();
+	}
+	
+	private Database refreshData() {
+		try {
+			users = getAllUsers();
+			employees = getAllEmployees();
+			managers = getAllManagers();
+			requests = getAllRequests();
+			mails = getAllMails();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return this;
 	}
 	
 	public static Database getDatabase ()  {
@@ -34,7 +46,7 @@ public class Database {
 	
 	///Show All elements
 	
-	public List<User> getAllUsers() throws Exception {
+	private List<User> getAllUsers() throws Exception {
 		List<User> users;
 		try{
 			Session session = sessionFactory.openSession();
@@ -52,7 +64,7 @@ public class Database {
 		return users;
 	}
 	
-	public List<Mail> getAllMails(){
+	private List<Mail> getAllMails(){
 		List<Mail> mails = null;
 		try{
 			Session session = sessionFactory.openSession();
@@ -67,7 +79,7 @@ public class Database {
 		return mails;
 	}
 	
-	public List<Request> getAllRequest(){
+	private List<Request> getAllRequests(){
 		List<Request> requests = null;
 		try{
 			Session session = sessionFactory.openSession();
@@ -82,7 +94,7 @@ public class Database {
 		return requests;
 	}
 	
-	public List<Employee> getAllEmployees() throws Exception {
+	private List<Employee> getAllEmployees() throws Exception {
 		List<Employee> requests;
 		try{
 			Session session = sessionFactory.openSession();
@@ -97,7 +109,7 @@ public class Database {
 		return requests;
 	}
 	
-	public List<Manager> getAllManagers() throws Exception {
+	private List<Manager> getAllManagers() throws Exception {
 		List<Manager> requests;
 		try{
 			Session session = sessionFactory.openSession();
@@ -118,7 +130,7 @@ public class Database {
 		session.save(x);
 		tx.commit();
 		session.close();
-		return this;
+		return refreshData();
 	}
 	public Database add (Employee x) {
 		Session session = sessionFactory.openSession();
@@ -126,7 +138,7 @@ public class Database {
 		session.save(x);
 		tx.commit();
 		session.close();
-		return this;
+		return refreshData();
 	}
 	public Database add (Manager x) {
 		Session session = sessionFactory.openSession();
@@ -134,7 +146,7 @@ public class Database {
 		session.save(x);
 		tx.commit();
 		session.close();
-		return this;
+		return refreshData();
 	}
 	public Database add (Mail x) {
 		Session session = sessionFactory.openSession();
@@ -142,7 +154,7 @@ public class Database {
 		session.save(x);
 		tx.commit();
 		session.close();
-		return this;
+		return refreshData();
 	}
 	public Database add (Request x) {
 		Session session = sessionFactory.openSession();
@@ -150,7 +162,7 @@ public class Database {
 		session.save(x);
 		tx.commit();
 		session.close();
-		return this;
+		return refreshData();
 	}
 	
 	/// Update
@@ -160,7 +172,7 @@ public class Database {
 		session.update(x);
 		tx.commit();
 		session.close();
-		return this;
+		return refreshData();
 	}
 	
 	public Database update (Employee x) {
@@ -169,7 +181,7 @@ public class Database {
 		session.update(x);
 		tx.commit();
 		session.close();
-		return this;
+		return refreshData();
 	}
 	public Database update (Manager x) {
 		Session session = sessionFactory.openSession();
@@ -177,7 +189,7 @@ public class Database {
 		session.update(x);
 		tx.commit();
 		session.close();
-		return this;
+		return refreshData();
 	}
 	public Database update (Mail x) {
 		Session session = sessionFactory.openSession();
@@ -185,7 +197,7 @@ public class Database {
 		session.update(x);
 		tx.commit();
 		session.close();
-		return this;
+		return refreshData();
 	}
 	public Database update (Request x) {
 		Session session = sessionFactory.openSession();
@@ -193,11 +205,9 @@ public class Database {
 		session.update(x);
 		tx.commit();
 		session.close();
-		return this;
+		return refreshData();
 	}
-	
-	
-	
+		
 	/// Delete
 	public Database delete (User x) {
 		Session session = sessionFactory.openSession();
@@ -205,7 +215,7 @@ public class Database {
 		session.delete(x);
 		tx.commit();
 		session.close();
-		return this;
+		return refreshData();
 	}
 	
 	public Database delete (Manager x) {
@@ -214,7 +224,7 @@ public class Database {
 		session.delete(x);
 		tx.commit();
 		session.close();
-		return this;
+		return refreshData();
 	}
 	
 	public Database delete (Employee x) {
@@ -223,7 +233,7 @@ public class Database {
 		session.delete(x);
 		tx.commit();
 		session.close();
-		return this;
+		return refreshData();
 	}
 	
 	public Database delete (Mail x) {
@@ -232,7 +242,7 @@ public class Database {
 		session.delete(x);
 		tx.commit();
 		session.close();
-		return this;
+		return refreshData();
 	}
 	
 	public Database delete (Request x) {
@@ -241,15 +251,8 @@ public class Database {
 		session.delete(x);
 		tx.commit();
 		session.close();
-		return this;
+		return refreshData();
 	}
 	
-//	private static <T> List<T> loadAllData(Class<T> type, Session session) {
-//	    CriteriaBuilder builder = session.getCriteriaBuilder();
-//	    CriteriaQuery<T> criteria = builder.createQuery(type);
-//	    criteria.from(type);
-//	    List<T> data = session.createQuery(criteria).getResultList();
-//	    return data;
-//	 }
-//	
+	
 }

@@ -17,24 +17,13 @@ public class UserServicesImpl implements UserServices{
 	@Override
 	public User login(String in, String pw) {
 		// TODO Auto-generated method stub
-		try {
-			List<User> users = data.getAllUsers();
-			for (User temp : users) {
-				if(
-						( temp.getUserName().equals(in) && temp.getPassword().equals(pw) ) 
+		return data.users.stream()
+				.filter(e -> 
+						(e.getUserName().equals(in) && e.getPassword().equals(pw))
 						||
-						( temp.getEmail().equals(in) && temp.getPassword().equals(pw) )
-				) 
-				{
-					return temp;
-				}
-			}
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		System.out.println("no User match");
-		return null;
+						(e.getEmail().equals(in) && e.getPassword().equals(pw))
+						)
+				.findFirst().orElse(null);
 	}
 
 	@Override
@@ -44,11 +33,20 @@ public class UserServicesImpl implements UserServices{
 	}
 
 	@Override
-	public Mail forgotPassword(String in) {
+	public String forgotPassword(String in) {
 		// TODO Auto-generated method stub
+		User u  = data.users.stream()
+			.filter(e -> 
+					(e.getUserName().equals(in))
+					||
+					(e.getEmail().equals(in))
+					)
+			.findFirst().orElse(null);
 		
-		
-		return null;
+		if (u==null) {
+			return null;			
+		}
+		return u.getEmail();
 	}
 	
 	

@@ -67,27 +67,13 @@ public class ManagerServicesImpl implements UserServices, EmployeeServices, Mana
 	@Override
 	public Manager login(String in, String pw) {
 		// TODO Auto-generated method stub
-		try {
-			List<Manager> managers = data.getAllManagers();
-			System.out.println(managers.size());
-			for (Manager temp : managers) {
-				if(
-						( temp.getUserName().equals(in) && temp.getPassword().equals(pw) ) 
+		return data.managers.stream()
+				.filter(e -> 
+						(e.getUserName().equals(in) && e.getPassword().equals(pw))
 						||
-						( temp.getEmail().equals(in) && temp.getPassword().equals(pw) )
-				) 
-				{
-					return temp;
-				}
-			}
-		
-		
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		System.out.println("no Manager match");
-		return null;
+						(e.getEmail().equals(in) && e.getPassword().equals(pw))
+						)
+				.findFirst().orElse(null);
 	}
 
 	@Override
@@ -97,7 +83,7 @@ public class ManagerServicesImpl implements UserServices, EmployeeServices, Mana
 	}
 
 	@Override
-	public Mail forgotPassword(String userNameOEmail) {
+	public String forgotPassword(String userNameOEmail) {
 		// TODO Auto-generated method stub
 		return null;
 	}

@@ -27,6 +27,9 @@ public class Mail {
 		content = cont;
 	}
 	
+	public long getId() {
+		return mailId;
+	}
 	public User getSender() {
 		return sender;
 	}
@@ -42,5 +45,14 @@ public class Mail {
 		return 	"Sender: "+sender.userName+ "\n" +
 				"Receiver: "+ receiver.userName + "\n"+
 				"Content: "+ content;
+	}
+	
+	public String toJson() {
+		return "{"
+				+ "\"mailId\" :"+ mailId+","
+				+ "\"sender_url\" : \"/api/users?Id="+ sender.getId() + "\","
+				+ "\"receiver_url\" : \"/api/users?Id="+ receiver.getId() + "\","		
+				+ "\"content\" : \""+ content +"\""
+				+ "}";
 	}
 }

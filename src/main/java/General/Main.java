@@ -12,6 +12,7 @@ public class Main {
 	
 	public static void main ( String[] varargs ) throws Exception {
 		Database data = Database.getDatabase();
+		Manipulate manipulate = Manipulate.manipulate.getInstance();
 		UserServicesImpl userServices = UserServicesImpl.getInstance();
 		EmployeeServicesImpl employeeServices = EmployeeServicesImpl.getInstance();
 		ManagerServicesImpl managerServices = ManagerServicesImpl.getInstance();
@@ -50,10 +51,13 @@ public class Main {
 //		println(b1);
 //		println(c1);
 //		
+//		String mailContent =" hello world";
+//		
+//		Mail newMail = new Mail(a,b1,mailContent);
+//		data.add(newMail).refreshData();
+//		
 		printBorder();
-		List<User> users = data.getAllUsers();
-		System.out.println(data.getAllEmployees().size());
-		System.out.println(data.getAllManagers().size());
+		
 		
 	}
 
