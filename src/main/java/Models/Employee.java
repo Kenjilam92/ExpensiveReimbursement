@@ -31,8 +31,9 @@ public class Employee extends User{
 		return leader;
 	}
 	
-	public void setLeader(Manager m) {
+	public Employee setLeader(Manager m) {
 		leader = m;
+		return this;
 	}
 	
 	
@@ -50,7 +51,21 @@ public class Employee extends User{
 				+ "\"email\" :" + "\"" + email + "\","
 				+ "\"firstName\" :" + "\"" + firstName + "\","
 				+ "\"lastName\" :" + "\"" + lastName + "\","
-				+ "\"leader_url\" : \"/api/users?Id="+ leader.userId + "\","
+				+ "\"title\" :" + "\"Employee\","
+				+ "\"leader_url\" : \"/api/users?Id="+ leader.userId + "\""
+				+ "}";
+	}
+	@Override
+	public String toJsonSecret() {
+		return "{ "
+				+ "\"userId\" : " + userId + ","
+				+ "\"userName\" :" + "\"" + userName + "\","
+				+ "\"password\" :" + "\"" + password + "\","
+				+ "\"email\" :" + "\"" + email + "\","
+				+ "\"firstName\" :" + "\"" + firstName + "\","
+				+ "\"lastName\" :" + "\"" + lastName + "\","
+				+ "\"title\" :" + "\"Employee\","
+				+ "\"leader_url\" : \"/api/users?Id="+ leader.userId + "\""
 				+ "}";
 	}
 }

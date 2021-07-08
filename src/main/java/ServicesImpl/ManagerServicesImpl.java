@@ -4,7 +4,7 @@ import Models.*;
 import Services.*;
 import java.util.*;
 
-public class ManagerServicesImpl implements UserServices, EmployeeServices, ManagerServices {
+public class ManagerServicesImpl implements ManagerServices {
 	
 	private static ManagerServicesImpl obj = new ManagerServicesImpl();
 	private Database data = Database.getDatabase();
@@ -15,59 +15,9 @@ public class ManagerServicesImpl implements UserServices, EmployeeServices, Mana
 		return obj;
 	}
 	
-	
-	@Override
-	public boolean approveRequest(Request req) {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
-	public boolean dennyRequest(Request req) {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
-	public boolean restorePassword(Employee e) {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
-	public Employee changeName(Employee e) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public void updateRequest(Request updatedRequest) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void deleteRequest(Request select) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void createRequest(Request newRequest) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public Request findRequest(Employee e, int requestId) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
 	public Manager login(String in, String pw) {
 		// TODO Auto-generated method stub
-		return data.managers.stream()
+		return data.getAllManagers().stream()
 				.filter(e -> 
 						(e.getUserName().equals(in) && e.getPassword().equals(pw))
 						||
@@ -77,15 +27,36 @@ public class ManagerServicesImpl implements UserServices, EmployeeServices, Mana
 	}
 
 	@Override
-	public void logout() {
+	public boolean approveRequest(Manager m, Request req) {
 		// TODO Auto-generated method stub
-		
+		if(req.getAuthor().getLeader().getId() != m.getId())
+			return false;
+		else {
+			req.setIsApproved(true);
+			req.setIsDennied(false);
+			data.update(req);
+			return true;
+		}
 	}
 
 	@Override
-	public String forgotPassword(String userNameOEmail) {
+	public boolean dennyRequest(Manager m, Request req) {
 		// TODO Auto-generated method stub
-		return null;
+		if(req.getAuthor().getLeader().getId() != m.getId())
+			return false;
+		else {
+			req.setIsApproved(false);
+			req.setIsDennied(true);
+			data.update(req);
+			return true;
+		}
 	}
 
+	@Override
+	public boolean restorePassword(Employee e) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	
 }

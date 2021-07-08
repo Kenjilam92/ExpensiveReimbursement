@@ -52,7 +52,7 @@ public class RequestAPI extends HttpServlet{
 	}
 	
 	private void showAllRequestsAPI (StringBuilder text) {
-		List<Request> requests = data.requests;
+		List<Request> requests = data.getAllRequests();
 		try {
 			// this element to confirm data connected
 			text.append("\"connected\" : true ,");
@@ -61,6 +61,7 @@ public class RequestAPI extends HttpServlet{
 			for (Request r : requests ) {
 				text.append(r.toJson()+",");	
 			}
+			if (requests.size()>0) text.deleteCharAt(text.length()-1);
 			text.append("]");
 
 		} catch (Exception e) {

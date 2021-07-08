@@ -4,7 +4,6 @@ import Models.*;
 import java.io.IOException;
 import java.util.*;
 import javax.servlet.http.*;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 
 import tools.*;
@@ -26,8 +25,8 @@ public class UserAPI extends HttpServlet implements Print {
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse res) throws IOException {
 		// preparation for the json content
-		
-		ObjectMapper om = new ObjectMapper();
+//		res.addHeader("Access-Control-Allow-Origin",req.getHeader("Origin"));
+//		res.addHeader("Access-Control-Allow-Methods", "GET");
 		StringBuilder text = new StringBuilder(); 
 		
 		// json file start hear 
@@ -56,7 +55,7 @@ public class UserAPI extends HttpServlet implements Print {
 	}
 	
 	private void showAllUsersAPI (StringBuilder text) {
-		List<User> users = data.users;
+		List<User> users = data.getAllUsers();
 		try {
 			// this element to confirm data connected
 			text.append("\"connected\" : true ,");
@@ -65,6 +64,7 @@ public class UserAPI extends HttpServlet implements Print {
 			for (User u : users ) {
 				text.append(u.toJson()+",");	
 			}
+			if (users.size()>0) text.deleteCharAt(text.length()-1);
 			text.append("]");
 
 		} catch (Exception e) {
@@ -86,19 +86,23 @@ public class UserAPI extends HttpServlet implements Print {
 			List<Mail> inbox = manipulate.getInboxMails(u);
 			List<Mail> sent = manipulate.getSentMails(u);
 			text.append("\"profile\" : ");
-			text.append(u.toJson()+",");	
+			text.append(u.toJsonSecret()+",");	
 			
 			text.append("\"inbox\" : [");
 			for (Mail m : inbox ) {
 				text.append(m.toJson()+",");	
 			}
+			if (inbox.size()>0) text.deleteCharAt(text.length()-1);
 			text.append("],");
 			
 			text.append("\"sent\" : [");
 			for (Mail m : sent ) {
 				text.append(m.toJson()+",");	
 			}
+			if (sent.size()>0) text.deleteCharAt(text.length()-1);
 			text.append("]");
+			
+			
 		}
 		else {
 			text.append("\"errors\" : [\"data does not exist\"]");

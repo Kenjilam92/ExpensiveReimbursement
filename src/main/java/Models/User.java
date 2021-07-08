@@ -75,8 +75,47 @@ public class User {
 //				+ "\"password\" :" + "\"" + password + "\","
 				+ "\"email\" :" + "\"" + email + "\","
 				+ "\"firstName\" :" + "\"" + firstName + "\","
-				+ "\"lastName\" :" + "\"" + lastName + "\""
+				+ "\"lastName\" :" + "\"" + lastName + "\","
+				+ "\"title\" :" + "\"User\""
 				+ "}";
+	}
+	
+	public String toJsonSecret() {
+		return "{ "
+				+ "\"userId\" : " + userId + ","
+				+ "\"userName\" :" + "\"" + userName + "\","
+				+ "\"password\" :" + "\"" + password + "\","
+				+ "\"email\" :" + "\"" + email + "\","
+				+ "\"firstName\" :" + "\"" + firstName + "\","
+				+ "\"lastName\" :" + "\"" + lastName + "\","
+				+ "\"title\" :" + "\"User\""
+				+ "}";
+	}
+
+	public User setUserName(String uN) {
+		// TODO Auto-generated method stub
+		userName =uN;
+		return this;
+	}
+	public User setEmail(String uN) {
+		// TODO Auto-generated method stub
+		email =uN;
+		return this;
+	}
+	public User setPassword(String uN) {
+		// TODO Auto-generated method stub
+		password =uN;
+		return this;
+	}
+	public User setFirstName(String uN) {
+		// TODO Auto-generated method stub
+		firstName =uN;
+		return this;
+	}
+	public User setLastName(String uN) {
+		// TODO Auto-generated method stub
+		lastName =uN;
+		return this;
 	}
 	
 }

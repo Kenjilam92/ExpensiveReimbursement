@@ -63,9 +63,23 @@ public class Request {
 	public String toJson() {
 		return "{"
 				+"\"requestId\" : "+requestId+","
-				+"\"author_url\" : \"/api/users?Id=\""+ author.getId() + "\""+","
+				+"\"authorUrl\" : \"/api/users?Id="+ author.getId() + "\""+","
 				+"\"cost\" : "+ cost+","
-				+"\"content\" : \"" + content + "\"," 
+				+"\"content\" : \"" + content + "\","
+				+ "\"authorFirstName\" : \""+ author.getFirstName() + "\","
+				+ "\"authorLastName\" : \"" + author.getLastName() + "\","
+				+ "\"isApproved\" : " + isApproved+","
+				+ "\"isDennied\" : " + isDennied
 				+ "}";
+	}
+
+	public void setIsApproved(boolean b) {
+		// TODO Auto-generated method stub
+		isApproved = b;
+		
+	}
+	public void setIsDennied(boolean b) {
+		// TODO Auto-generated method stub
+		isDennied = b;
 	}
 }

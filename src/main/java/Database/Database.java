@@ -11,33 +11,43 @@ import java.util.*;
 public class Database {
 	private static Database database = new Database();
 	
-	public List<User> users;
-	public List<Employee> employees;
-	public List<Manager> managers;
-	public List<Mail> mails;
-	public List<Request> requests;
+//	public List<User> users;
+//	public List<Employee> employees;
+//	public List<Manager> managers;
+//	public List<Mail> mails;
+//	public List<Request> requests;
 	
 	private SessionFactory sessionFactory;
 	private Database(){
 		final Configuration config = new Configuration().configure();
 		final StandardServiceRegistryBuilder builder = new StandardServiceRegistryBuilder().applySettings(config.getProperties());
 		sessionFactory = config.buildSessionFactory(builder.build());
-		refreshData();
+//		refreshData();
 	}
 	
-	private Database refreshData() {
-		try {
-			users = getAllUsers();
-			employees = getAllEmployees();
-			managers = getAllManagers();
-			requests = getAllRequests();
-			mails = getAllMails();
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		return this;
+	public String dataSize() {
+		return "{"
+				+ "Users : " + getAllUsers().size() +", "
+				+ "Employees: " + getAllEmployees().size()+", "
+				+ "Manager: " + getAllManagers().size()+", "
+				+ "Requests: " + getAllRequests().size()+", "
+				+ "Mails: " + getAllMails().size()
+				+"}";
 	}
+	
+//	public Database refreshData() {
+//		try {
+//			users = getAllUsers();
+//			employees = getAllEmployees();
+//			managers = getAllManagers();
+//			requests = getAllRequests();
+//			mails = getAllMails();
+//		} catch (Exception e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
+//		return this;
+//	}
 	
 	public static Database getDatabase ()  {
 		return database;
@@ -46,25 +56,22 @@ public class Database {
 	
 	///Show All elements
 	
-	private List<User> getAllUsers() throws Exception {
-		List<User> users;
+	public List<User> getAllUsers() {
+		List<User> users= null;
 		try{
 			Session session = sessionFactory.openSession();
 			Transaction tx = session.beginTransaction();
 			users = session.createCriteria(User.class).list();
-
-			
-			System.out.println(users.size());
 			tx.commit();
 			session.close();
 		}
 		catch (Exception e) {
-			throw e;
+			e.printStackTrace();
 		}
 		return users;
 	}
 	
-	private List<Mail> getAllMails(){
+	public List<Mail> getAllMails(){
 		List<Mail> mails = null;
 		try{
 			Session session = sessionFactory.openSession();
@@ -79,7 +86,7 @@ public class Database {
 		return mails;
 	}
 	
-	private List<Request> getAllRequests(){
+	public List<Request> getAllRequests(){
 		List<Request> requests = null;
 		try{
 			Session session = sessionFactory.openSession();
@@ -94,8 +101,8 @@ public class Database {
 		return requests;
 	}
 	
-	private List<Employee> getAllEmployees() throws Exception {
-		List<Employee> requests;
+	public List<Employee> getAllEmployees() {
+		List<Employee> requests = null;
 		try{
 			Session session = sessionFactory.openSession();
 			Transaction tx = session.beginTransaction();
@@ -104,13 +111,13 @@ public class Database {
 			session.close();
 		}
 		catch (Exception e) {
-			throw e;
+			e.printStackTrace();
 		}
 		return requests;
 	}
 	
-	private List<Manager> getAllManagers() throws Exception {
-		List<Manager> requests;
+	public List<Manager> getAllManagers() {
+		List<Manager> requests = null;
 		try{
 			Session session = sessionFactory.openSession();
 			Transaction tx = session.beginTransaction();
@@ -119,7 +126,7 @@ public class Database {
 			session.close();
 		}
 		catch (Exception e) {
-			throw e;
+			e.printStackTrace();
 		}
 		return requests;
 	}
@@ -130,7 +137,7 @@ public class Database {
 		session.save(x);
 		tx.commit();
 		session.close();
-		return refreshData();
+		return this;
 	}
 	public Database add (Employee x) {
 		Session session = sessionFactory.openSession();
@@ -138,7 +145,7 @@ public class Database {
 		session.save(x);
 		tx.commit();
 		session.close();
-		return refreshData();
+		return this;
 	}
 	public Database add (Manager x) {
 		Session session = sessionFactory.openSession();
@@ -146,7 +153,7 @@ public class Database {
 		session.save(x);
 		tx.commit();
 		session.close();
-		return refreshData();
+		return this;
 	}
 	public Database add (Mail x) {
 		Session session = sessionFactory.openSession();
@@ -154,7 +161,7 @@ public class Database {
 		session.save(x);
 		tx.commit();
 		session.close();
-		return refreshData();
+		return this;
 	}
 	public Database add (Request x) {
 		Session session = sessionFactory.openSession();
@@ -162,7 +169,7 @@ public class Database {
 		session.save(x);
 		tx.commit();
 		session.close();
-		return refreshData();
+		return this;
 	}
 	
 	/// Update
@@ -172,7 +179,7 @@ public class Database {
 		session.update(x);
 		tx.commit();
 		session.close();
-		return refreshData();
+		return this;
 	}
 	
 	public Database update (Employee x) {
@@ -181,7 +188,7 @@ public class Database {
 		session.update(x);
 		tx.commit();
 		session.close();
-		return refreshData();
+		return this;
 	}
 	public Database update (Manager x) {
 		Session session = sessionFactory.openSession();
@@ -189,7 +196,7 @@ public class Database {
 		session.update(x);
 		tx.commit();
 		session.close();
-		return refreshData();
+		return this;
 	}
 	public Database update (Mail x) {
 		Session session = sessionFactory.openSession();
@@ -197,7 +204,7 @@ public class Database {
 		session.update(x);
 		tx.commit();
 		session.close();
-		return refreshData();
+		return this;
 	}
 	public Database update (Request x) {
 		Session session = sessionFactory.openSession();
@@ -205,7 +212,7 @@ public class Database {
 		session.update(x);
 		tx.commit();
 		session.close();
-		return refreshData();
+		return this;
 	}
 		
 	/// Delete
@@ -215,7 +222,7 @@ public class Database {
 		session.delete(x);
 		tx.commit();
 		session.close();
-		return refreshData();
+		return this;
 	}
 	
 	public Database delete (Manager x) {
@@ -224,7 +231,7 @@ public class Database {
 		session.delete(x);
 		tx.commit();
 		session.close();
-		return refreshData();
+		return this;
 	}
 	
 	public Database delete (Employee x) {
@@ -233,7 +240,7 @@ public class Database {
 		session.delete(x);
 		tx.commit();
 		session.close();
-		return refreshData();
+		return this;
 	}
 	
 	public Database delete (Mail x) {
@@ -242,7 +249,7 @@ public class Database {
 		session.delete(x);
 		tx.commit();
 		session.close();
-		return refreshData();
+		return this;
 	}
 	
 	public Database delete (Request x) {
@@ -251,7 +258,7 @@ public class Database {
 		session.delete(x);
 		tx.commit();
 		session.close();
-		return refreshData();
+		return this;
 	}
 	
 	

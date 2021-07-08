@@ -19,7 +19,7 @@ public class MailAPI extends HttpServlet{
 	private Database data = Database.getDatabase();
 	private Manipulate manipulate = Manipulate.getInstance();
 	
-	public MailAPI() throws Exception {
+	public MailAPI(){
 		super();
 		
 	}
@@ -28,7 +28,6 @@ public class MailAPI extends HttpServlet{
 		// preparation for the json content
 		
 		StringBuilder text = new StringBuilder(); 
-		
 		// json file start hear 
 		text.append("{");
 		
@@ -54,7 +53,7 @@ public class MailAPI extends HttpServlet{
 	}
 	
 	private void showAllMailsAPI (StringBuilder text) {
-		List<Mail> mails = data.mails;
+		List<Mail> mails = data.getAllMails();
 		try {
 			// this element to confirm data connected
 			text.append("\"connected\" : true ,");
@@ -63,6 +62,7 @@ public class MailAPI extends HttpServlet{
 			for (Mail u : mails ) {
 				text.append(u.toJson()+",");	
 			}
+			if (mails.size()>0) text.deleteCharAt(text.length()-1);
 			text.append("]");
 
 		} catch (Exception e) {

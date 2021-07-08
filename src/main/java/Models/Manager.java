@@ -1,10 +1,7 @@
 package Models;
 
 import javax.persistence.Column;
-import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
-import javax.persistence.JoinColumn;
-import javax.persistence.PrimaryKeyJoinColumn;
 import javax.persistence.Table;
 
 @Entity
@@ -24,12 +21,12 @@ public class Manager extends Employee{
 		setLeader(this);
 	}
 	
-	public Manager(Employee e) {
-		this( (User)e );		
-	}
-	
-	public void changeTeamSize(int size) {
+	public Manager setTeamSize(int size) {
 		teamSize = size;
+		return this;
+	}
+	public int getTeamSize() {
+		return teamSize;
 	}
 	
 	@Override
@@ -41,6 +38,21 @@ public class Manager extends Employee{
 				+ "\"email\" :" + "\"" + email + "\","
 				+ "\"firstName\" :" + "\"" + firstName + "\","
 				+ "\"lastName\" :" + "\"" + lastName + "\","
+				+ "\"title\" :" + "\"Manager\","
+				+ "\"leader_url\" : \"/api/users?Id="+ leader.userId + "\","
+				+ "\"teamSize\" : "+ teamSize
+				+ "}";
+	}
+	@Override
+	public String toJsonSecret() {
+		return "{ "
+				+ "\"userId\" : " + userId + ","
+				+ "\"userName\" :" + "\"" + userName + "\","
+				+ "\"password\" :" + "\"" + password + "\","
+				+ "\"email\" :" + "\"" + email + "\","
+				+ "\"firstName\" :" + "\"" + firstName + "\","
+				+ "\"lastName\" :" + "\"" + lastName + "\","
+				+ "\"title\" :" + "\"Manager\","
 				+ "\"leader_url\" : \"/api/users?Id="+ leader.userId + "\","
 				+ "\"teamSize\" : "+ teamSize
 				+ "}";

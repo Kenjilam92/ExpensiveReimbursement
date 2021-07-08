@@ -11,6 +11,7 @@ Logging 5%
 Expense Reimbursement System (ERS)
 
 -An Employee can login
+
 -An Employee can view the Employee Homepage
 -An Employee can logout
 -An Employee can submit a reimbursement request
@@ -21,6 +22,7 @@ Expense Reimbursement System (ERS)
 -An Employee receives an email when one of their reimbursement requests is resolved (optional)
 
 -A Manager can login
+
 -A Manager can view the Manager Homepage
 -A Manager can logout
 -A Manager can approve/deny pending reimbursement requests
