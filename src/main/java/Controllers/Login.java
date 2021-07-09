@@ -139,7 +139,7 @@ public class Login  extends HttpServlet{
 		text.append("\"sent\" :");
 		text.append("[");
 		sent.stream().forEach(e -> text.append(e.toJson()+","));
-		if (team.size()>0) text.deleteCharAt(text.length()-1);
+		if (sent.size()>0) text.deleteCharAt(text.length()-1);
 		text.append("],");
 		
 		text.append("\"requests\" :");
@@ -147,6 +147,8 @@ public class Login  extends HttpServlet{
 		requests.stream().forEach(e -> text.append(e.toJson()+","));
 		if (requests.size()>0) text.deleteCharAt(text.length()-1);
 		text.append("]");
+		
+		
 	}
 	
 	private void renderUser(User m, StringBuilder text) {

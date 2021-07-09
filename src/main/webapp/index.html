@@ -14,6 +14,8 @@
             $('#Manager').hide();
             $('#User').hide();
             $('#Employee').hide();
+            $('#headline').hide();
+
             //// Handle cookies
             var usesN = readCookie('userName');
             var pass =  readCookie('password');
@@ -24,6 +26,20 @@
             ///// Handle LogoutForm
             $('#logout').click( function () { logout() } );
             
+            ////// Handle RegisterForm
+            $(document).on('submit', '#RegisterForm', function(e) {               
+                e.preventDefault();
+                var uN = $("#registerUn").val();
+                var Em = $("#registerEm").val();
+                var Fn = $("#registerFn").val();
+                var Ln = $("#registerLn").val();
+                var Pw = $("#registerPw").val();
+                
+                register(uN,Em,Fn,Ln,Pw);
+                
+            return false;
+            });
+
             
             ////// Handle LoginForm
             $(document).on('submit', '#LoginForm', function(e) {               
@@ -100,8 +116,8 @@
         /// update Profile 
 
         function updateProfile (profile){
-            // $('#welcome').append(`Welcome, ${profile.firstName}!`)
-            // $('#job-title').append(`Title : ${profile.title}`)
+            $('#welcome').text(`Welcome, ${profile.firstName}!`)
+            $('#job-title').text(`Title : ${profile.title}`)
             $('#profileUserName').attr("value",`${profile.userName}`);
             $('#profileEmail').attr("value",`${profile.email}`);
             $('#profileFirstName').attr("value",`${profile.firstName}`);
@@ -141,6 +157,33 @@
             createCookie(name, "", -1);
         }
 
+        //// register
+        function register(uN,eM,fN,lN,pw){
+            $.ajax({
+                type: "POST",
+                url: "http://localhost:9090/ExpenseReimbursement/api/add?type=User",
+                data: JSON.stringify({
+                    userName : uN,
+                    email : eM,
+                    firstName : fN,
+                    lastName : lN,
+                    password : pw
+                }),
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function(data)
+                {
+                    console.log(data);
+                    
+                },
+                error: function(data){
+                    console.log(data);
+                }
+            });
+
+
+        }
+
 
         //// logout
         function logout(){
@@ -159,36 +202,38 @@
                     url: "http://localhost:9090/ExpenseReimbursement/api/login",
                     data: JSON.stringify({
 						userName : inp,
-                    	password : pw
-					
-					}), // serializes the form's elements.
+                    	password : pw			
+					}),
                     contentType: "application/json; charset=utf-8",
     				dataType: "json",
                     success: function(data)
-                    {
-                        console.log(data); // show response from the php script.
-                        switch (data.profile.title){
-                            case"Manager":{
-                                showManager(data);
-                                break;
+                    {   
+                        console.log(data);
+                        if(!data.errors){
+                            $('#login').hide();
+                            $('#mainPage').show();
+                            $('#editProfile').show();
+                            $('#headline').show();
+                            createCookie("userName",inp);
+                            createCookie("password",pw);
+                            console.log(data); // show response from the php script.
+                            switch (data.profile.title){
+                                case"Manager":{
+                                    showManager(data);
+                                    break;
+                                }
+                                case"Employee":{
+                                    showEmployee(data);
+                                    break;
+                                }
+                                case"User":{
+                                    $(`#User`).show();
+                                    break;
+                                }
                             }
-                            case"Employee":{
-                                break;
-                            }
-                            case"User":{
-                                break;
-                            }
+                            const profile = data.profile;
+                            updateProfile(profile);
                         }
-                        $('#login').hide();
-                        $('#mainPage').show();
-                        $('#editProfile').show();
-                        createCookie("userName",inp);
-                        createCookie("password",pw);
-
-                        const profile = data.profile;
-                        console.log(profile);
-                        updateProfile(profile);
-                        showManager(data);
                         
                         
                     },
@@ -224,7 +269,7 @@
             window.location.reload(false);
         }
 
-        //////
+        //////approve denny request
 
         function approveRequest (uId,rId){
             
@@ -272,20 +317,67 @@
             window.location.reload(false);
         }
 
+        ///////hire user and remove employee 
+
+        function removeEmployee (uId){
+            $.ajax({
+                type: "POST",
+                url: "http://localhost:9090/ExpenseReimbursement/api/delete?type=Employee",
+                data: JSON.stringify({
+                    userId: uId,
+
+                }),
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function(data)
+                {
+                    console.log(data);
+                },
+                error: function(data){
+                    console.log(data);
+                }
+            });
+            window.location.reload(false);
+        }
+
+        function hireUser (mId, uId){
+            $.ajax({
+                type: "POST",
+                url: "http://localhost:9090/ExpenseReimbursement/api/add?type=Employee",
+                data: JSON.stringify({
+                    userId: uId,
+                    managerId: mId
+                }),
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function(data)
+                {
+                    console.log(data);
+                },
+                error: function(data){
+                    console.log(data);
+                }
+            });
+            window.location.reload(false);
+        }
 
         /// Render Manager details 
         function showManager (data){
             console.log(data.pendingRequests);
  
             $('#Manager').show();
-           
-           
-
             const requestTable = document.querySelector('#bodyRequests');
             while(requestTable.firstChild){
                 requestTable.removeChild(requestTable.firstChild);
             };
-            
+            const employeeTable = document.querySelector('#bodyEmployee');
+            while(employeeTable.firstChild){
+                employeeTable.removeChild(employeeTable.firstChild);
+            };
+            const userTable = document.querySelector('#bodyUser');
+            while(userTable.firstChild){
+                userTable.removeChild(userTable.firstChild);
+            };
             
             data.pendingRequests.forEach(e => {
                     const row = document.createElement('tr')
@@ -312,14 +404,12 @@
                     ////////////// specical button
                     const actions = document.createElement('td');
                     const approveButton = document.createElement('button');
-                    approveButton.setAttribute("class","btn btn-success");
-                    // approveButton.setAttribute("onclick", `approveRequest(${$('#profileUserId')},${e.requestId})`);
+                    approveButton.setAttribute("class","btn btn-sm btn-success");
                     approveButton.onclick = () => approveRequest( parseInt($('#profileUserId').val()),e.requestId);
                     approveButton.innerText = "Approve"
 
                     const dennyButton = document.createElement('button');
-                    dennyButton.setAttribute("class","btn btn-danger");
-                    // dennyButton.setAttribute("onclick", `dennyRequest(${$('#profileUserId')},${e.requestId})`);
+                    dennyButton.setAttribute("class","btn btn-sm btn-danger");
                     dennyButton.onclick = () => dennyRequest( parseInt($('#profileUserId').val()),e.requestId);
                     dennyButton.innerText ="Denny"
 
@@ -331,7 +421,114 @@
                     requestTable.appendChild(row);
             });
             
-            const employeeTable = document.querySelector('#bodyEmployee');
+            
+            data.teamMate.forEach(e => {
+                if(e.userId !== data.profile.userId ){
+                    const row = document.createElement('tr') 
+                    
+                    const firstName = document.createElement('td');
+                    firstName.innerText = `${e.firstName}`;
+                    row.appendChild(firstName)
+                    
+                    const lastName = document.createElement('td');
+                    lastName.innerText = `${e.lastName}`;
+                    row.appendChild(lastName)
+                    
+                    const userName = document.createElement('td');
+                    userName.innerText = `${e.userName}`;
+                    row.appendChild(userName);
+
+                    const email = document.createElement('td');
+                    email.innerText = `${e.email}`;
+                    row.appendChild(email)
+
+                    ////////////////////////////special button
+                    
+                    const actions = document.createElement('td');
+                    const removeButton = document.createElement('button');
+                    removeButton.setAttribute("class","btn btn-sm btn-secondary");
+                    removeButton.onclick = () => removeEmployee( e.userId);
+                    removeButton.innerText = "Remove"
+                    actions.appendChild(removeButton);
+                    row.appendChild(actions)
+
+                    /////////////////////////////
+
+                    employeeTable.appendChild(row);
+                }
+            });
+
+            
+            data.unhired.forEach(e => {
+                    const row = document.createElement('tr')
+                    
+                    const userName = document.createElement('td');
+                    userName.innerText = `${e.userName}`;
+                    row.appendChild(userName);
+                    
+                    const firstName = document.createElement('td');
+                    firstName.innerText = `${e.firstName}`;
+                    row.appendChild(firstName)
+                    
+                    const lastName = document.createElement('td');
+                    lastName.innerText = `${e.lastName}`;
+                    row.appendChild(lastName)
+                    
+                    const email = document.createElement('td');
+                    email.innerText = `${e.email}`;
+                    row.appendChild(email)
+                    
+                    ////////////////////////////special button
+                    
+                    const actions = document.createElement('td');
+                    const hireButton = document.createElement('button');
+                    hireButton.setAttribute("class","btn btn-sm btn-primary");
+                    hireButton.onclick = () => hireUser( data.profile.userId  ,e.userId);
+                    hireButton.innerText = "Hire"
+                    actions.appendChild(hireButton);
+                    row.appendChild(actions)
+
+                    /////////////////////////////
+
+                    userTable.appendChild(row);
+            });
+        }
+
+        function showEmployee(data){
+            $('#Employee').show();
+            const requestTable = document.querySelector('#bodyRequests2');
+            while(requestTable.firstChild){
+                requestTable.removeChild(requestTable.firstChild);
+            };
+            
+            
+            data.requests.forEach(e => {
+                    const row = document.createElement('tr')
+                    const authorFirstName = document.createElement('td');
+                    authorFirstName.innerText = `${e.authorFirstName}`;
+                    row.appendChild(authorFirstName)
+
+                    const authorLastName = document.createElement('td');
+                    authorLastName.innerText = `${e.authorLastName}`;
+                    row.appendChild(authorLastName)
+                    
+                    const content = document.createElement('td');
+                    content.innerText = `${e.content}`;
+                    row.appendChild(content)
+                    
+
+                    const cost = document.createElement('td');
+                    cost.innerText = `${e.cost}`;
+                    row.appendChild(cost);
+                    
+                    const status = document.createElement('td');
+                    status.innerText = `${e.isApproved? e.isDennied ? "Error" : "Approve" : e.isDennied?"Dennied": "Pending" }`;
+                    row.appendChild(status);
+
+                    requestTable.appendChild(row);
+            });
+
+            const employeeTable = document.querySelector('#bodyEmployee2');
             while(employeeTable.firstChild){
                 employeeTable.removeChild(employeeTable.firstChild);
             };
@@ -357,36 +554,6 @@
                     
                     employeeTable.appendChild(row);
             });
-
-            const userTable = document.querySelector('#bodyUser');
-            while(userTable.firstChild){
-                userTable.removeChild(userTable.firstChild);
-            };
-            data.unhired.forEach(e => {
-                    const row = document.createElement('tr')
-                    
-                    const userName = document.createElement('td');
-                    userName.innerText = `${e.userName}`;
-                    row.appendChild(userName);
-                    
-                    const firstName = document.createElement('td');
-                    firstName.innerText = `${e.firstName}`;
-                    row.appendChild(firstName)
-                    
-                    const lastName = document.createElement('td');
-                    lastName.innerText = `${e.lastName}`;
-                    row.appendChild(lastName)
-                    
-                    const email = document.createElement('td');
-                    email.innerText = `${e.email}`;
-                    row.appendChild(email)
-                    
-                    userTable.appendChild(row);
-            });
-        }
-
-        function showEmployee(data){
-
         }
 
 
@@ -394,7 +561,7 @@
     <title>Expense Reimbrusment Project</title>
 </head>
 <body>
-<div class="row w-100 pl-5">    
+<div class="col w-100 pl-5">    
     <div class="row w-100 p-3 justify-content-around "id="login">
         <div class="col-md-4 m-3">
             <form action="#" id="LoginForm">
@@ -413,162 +580,206 @@
         </div>
         <div class="col-md-4 m-3">
             <form action=""  id="RegisterForm">
-                <h2>Register</h2>
+                
+	            <h2>Register</h2>
                 <div class="row justify-content-between">
-                    <label for="in">User Name:</label>
-                    <input type="text">
+                    <label for="userName">User Name:</label>
+                    <input type="text" name="userName" id="registerUn">
                 </div>
                 <div class="row justify-content-between">
                     <label for="email">Email:</label>
-                    <input type="text" name="email">    
+                    <input type="text" name="email" id="registerEm">    
                 </div>
                 <div class="row justify-content-between">
                     <label for="password">Password:</label>
-                    <input type="password" name="password">    
+                    <input type="password" name="password" id="registerPw">    
                 </div>
                 <div class="row justify-content-between">
                     <label for="firstName">First Name:</label>
-                    <input type="text" name="firstName">    
+                    <input type="text" name="firstName" id="registerFn">    
                 </div>
                 <div class="row justify-content-between">
                     <label for="lastName">Last Name:</label>
-                    <input type="text" name="lastName">    
+                    <input type="text" name="lastName" id="registerLn">    
                 </div>
                 <button type="submit" class="btn btn-success">Register</button>
             </form>
         </div>
     </div>
-
+    <div class="row justify-content-end text-primary" id="headline">
+        
+        
+        <button id="logout" class="btn btn-danger"> Logout </button>
+    </div> 
 
 <!-- main page -->
 
 <!-- side bar -->
-    <div class="col-md-4" id="editProfile">
-        <form action=""  id="ProfileForm">
-            <h2>Profile</h2>
-            <div class="row justify-content-between">
-                <label for="in">User Name:</label>
-                <input type="text" name="userName" id="profileUserName">
-            </div>
-            <div class="row justify-content-between">
-                <label for="email">Email:</label>
-                <input type="text" name="email" id="profileEmail">    
-            </div>
-            <div class="row justify-content-between">
-                <label for="password">Password:</label>
-                <input type="password" name="password" id="profilePassword">    
-            </div>
-            <div class="row justify-content-between">
-                <label for="firstName">First Name:</label>
-                <input type="text" name="firstName" id="profileFirstName">    
-            </div>
-            <div class="row justify-content-between">
-                <label for="lastName">Last Name:</label>
-                <input type="text" name="lastName" id="profileLastName">    
-            </div>
-            <input type="hidden" name="userId" id="profileUserId">
-            <button type="submit" class="btn btn-success">Update</button>
-        </form>
-    </div>
-
-    <div class="col-md-8" id="mainPage" >
-       <!-- main column -->
-        
-        <div class="col"id="Manager">
-            <div class="row justify-content-between text-primary">
-                <h1 id="welcome"></h1>
-                <p id="job-title"></p>
-                <button id="logout" class="btn btn-danger"> Logout </button>
-            </div> 
-           
-            <div class="RequestTable col">
-                <h3>Requests</h3>
-                <table class="table">
-                    <thead class="thead-dark">
-                        <tr>
-                            <th>First Name</th>
-                            <th>Last Name</th>
-                            <th>Requests</th>
-                            <th>Cost</th>
-                            <th>Status</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody id="bodyRequests">
-        
-                    </tbody>
-                </table>
-            </div>
-            <div class="EmployeeTable col">
-                <h3>Employees</h3>
-                <table class="table">
-                    <thead class="thead-dark">
-                        <tr>
-                            <th>First Name</th>
-                            <th>Last Name</th>
-                            <th>User Name</th>
-                            <th>Email</th>
-                        </tr>
-                    </thead>
-                    <tbody id="bodyEmployee">
-        
-                    </tbody>
-                </table>
-            </div>
-            <div class="UserTable col">
-                <h3>Users</h3>
-                <table class="table">
-                    <thead class="thead-dark">
-                        <tr>
-                            <th>First Name</th>
-                            <th>Last Name</th>
-                            <th>User Name</th>
-                            <th>Email</th>
-                        </tr>
-                    </thead>
-                    <tbody id="bodyUser">
-        
-                    </tbody>
-                </table>
-            </div>
+    <div class="row">
+        <div class="col-md-4" id="editProfile">
+            <form action=""  id="ProfileForm">
+                <div class="row justify-content-start">
+	                <h2>Profile</h2>
+                </div>	
+                <div class="row justify-content-between">
+                    <label for="firstName">First Name:</label>
+                    <input type="text" name="firstName" id="profileFirstName">    
+                </div>
+                <div class="row justify-content-between">
+                    <label for="lastName">Last Name:</label>
+                    <input type="text" name="lastName" id="profileLastName">    
+                </div>
+                <div class="row justify-content-between">
+                    <label for="in">User Name:</label>
+                    <input type="text" name="userName" id="profileUserName">
+                </div>
+                <div class="row justify-content-between">
+                    <label for="email">Email:</label>
+                    <input type="text" name="email" id="profileEmail">    
+                </div>
+                <div class="row justify-content-between">
+                    <label for="password">Password:</label>
+                    <input type="password" name="password" id="profilePassword">    
+                </div>
+                <input type="hidden" name="userId" id="profileUserId">
+                <button type="submit" class="btn btn-success">Update</button>
+            </form>
         </div>
-        <div id="Employee">
-            <div id="submitRequest">
-                <form action=""  id="RequestForm">
-                    <h2>Expense Reimbursement Request</h2>
-                    <div class="row justify-content-between">
-                        <div class="col-sm-5 ">
-                            <div class="row justify-content-between">
-                                <label for="content">Content:</label>
-                                <input type="text" name="content" id="requestContent">
+        <div class="col-md-8" id="mainPage" >
+        	 <div class="row justify-content-between align-items-end m-3">
+	            <h1 id="welcome" class="text-primary"></h1>
+            	<h4 class="text-success"><b id="job-title"></b></h4>
+            </div>	
+	        <!-- Manager Section -->
+            <div class="col"id="Manager">
+                        
+                <div id="RequestTable row">
+                    <h3>Requests</h3>
+                    <table class="table">
+                        <thead class="thead-dark">
+                            <tr>
+                                <th>First Name</th>
+                                <th>Last Name</th>
+                                <th>Requests</th>
+                                <th>Cost</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="bodyRequests">
+            
+                        </tbody>
+                    </table>
+                </div>
+                <div class="EmployeeTable row">
+                    <h3>Employees</h3>
+                    <table class="table">
+                        <thead class="thead-dark">
+                            <tr>
+                                <th>First Name</th>
+                                <th>Last Name</th>
+                                <th>User Name</th>
+                                <th>Email</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="bodyEmployee">
+            
+                        </tbody>
+                    </table>
+                </div>
+                <div class="UserTable row">
+                    <h3>Users</h3>
+                    <table class="table">
+                        <thead class="thead-dark">
+                            <tr>
+                                <th>First Name</th>
+                                <th>Last Name</th>
+                                <th>User Name</th>
+                                <th>Email</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="bodyUser">
+            
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Employee section -->
+
+            <div id="Employee" class="col">
+                <div id="submitRequest" >
+                    <form action=""  id="RequestForm">
+                        <h2>Expense Reimbursement Request</h2>
+                        <div class="row justify-content-center">
+                            <div class="col-sm-5 ">
+                                <div class="row justify-content-between">
+                                    <label for="content">Content:</label>
+                                    <input type="text" name="content" id="requestContent">
+                                </div>
                             </div>
-                        </div>
-                        <div class="col-sm-4">
-                            <div class="row justify-content-between">
-                                <label for="cost">Cost:</label>
-                                <input type="number" step=0.01 min=0.01 name="cost" id="requestCost">    
+                            <div class="col-sm-4">
+                                <div class="row justify-content-between">
+                                    <label for="cost">Cost:</label>
+                                    <input type="number" step=0.01 min=0.01 name="cost" id="requestCost">    
+                                </div>
                             </div>
-                        </div>
-                        <div class="col-sm-2">
-                            <button type="submit" class="btn btn-success">Submit</button>
-                        </div>
-                    </div>   
-                </form>
+                            <div class="col-sm-2">
+                                <button type="submit" class="btn btn-success">Submit</button>
+                            </div>
+                        </div>   
+                    </form>
+                </div>
+                
+                <div id="RequestTable" class="row">
+                    <h3>Requests</h3>
+                    <table class="table">
+                        <thead class="thead-dark">
+                            <tr>
+                                <th>First Name</th>
+                                <th>Last Name</th>
+                                <th>Requests</th>
+                                <th>Cost</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody id="bodyRequests2">
+            
+                        </tbody>
+                    </table>
+                </div>
+                <div class="EmployeeTable row">
+                    <h3>Team members</h3>
+                    <table class="table ">
+                        <thead class="thead-dark">
+                            <tr>
+                                <th>First Name</th>
+                                <th>Last Name</th>
+                                <th>User Name</th>
+                                <th>Email</th>
+                            </tr>
+                        </thead>
+                        <tbody id="bodyEmployee2">
+            
+                        </tbody>
+                    </table>
+                </div>
             </div>
-        </div>
+            
+            <div id="User" class="col">
+                <p class="display-2 row">Sorry! You have to wait utill get hired</p>
+            </div>
+    
         
-        <div id="User">
-            <p class="display-2">Sorry! You have to wait utill get hired</p>
+
+
+        
+        
+
         </div>
-   
-    
-
-
-    
-    
-
     </div>
-
 </div>
     
 
