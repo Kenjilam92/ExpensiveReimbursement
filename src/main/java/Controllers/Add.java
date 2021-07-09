@@ -28,6 +28,8 @@ public class Add extends HttpServlet{
 		while  ((line = reader.readLine()) != null) {
 			json.append(line);
 		}
+		System.out.println(json);
+		
 		JSONObject jsonObject = new JSONObject(json.toString());
 		
 	    // json file start hear 
@@ -35,27 +37,27 @@ public class Add extends HttpServlet{
 	 	text.append("\"connected\" : true ,");
 	    if (req.getParameterMap().containsKey("type")){	    	
 	    	switch ( req.getParameter("type") ) {
-	    		case"user":{
+	    		case"User":{
 	    			//add?type=user
 	    			addUser(req,text,jsonObject);
 	    			break;
 	    		}
-	    		case"employee":{
+	    		case"Employee":{
 	    			//add?type=employee
 	    			addEmployee(req,text,jsonObject);
 	    			break;
 	    		}
-	    		case"manager":{
+	    		case"Manager":{
 	    			//add?type=manager
 	    			addManager(req,text,jsonObject);
 	    			break;
 	    		}
-	    		case"mail":{
+	    		case"Mail":{
 	    			//add?type=mail
 	    			addMail(req,text,jsonObject);
 	    			break;
 	    		}
-	    		case"request":{
+	    		case"Request":{
 	    			//add?type=request
 	    			addRequest(req,text,jsonObject);
 	    			break;
@@ -80,6 +82,9 @@ public class Add extends HttpServlet{
 		long userId = jsonObject.getLong("userId");
 		Employee e = manipulate.getEmployee(userId);
 		double cost = jsonObject.getDouble("cost");
+		System.out.println(userId);
+		System.out.println(e);
+		System.out.println(cost);
 		String content = jsonObject.getString("content");
 		data.add(new Request(e,cost,content));
 		text.append("\"status\" : \"success\"");

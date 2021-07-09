@@ -116,7 +116,7 @@ public class Delete extends HttpServlet{
 		long userId = json.getLong("userId");
 		Employee e = manipulate.getEmployee(userId);
 		e.setLeader(null);		
-		data.update(e).delete(e);
+		data.update(e).delete(e).add((User)e);
 		text.append("\"status\" : \"success\"");
 	}
 

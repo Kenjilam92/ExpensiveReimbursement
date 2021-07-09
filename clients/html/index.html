@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+    <script type="text/javascript">
+        $(document).ready( function(){
+            $(document).on('submit', '#LoginForm', function() {
+                console.log("hello");
+                var form = $("#LoginForm");
+                var userName = $("#login-username").val();
+                var password =$("#password-username").val();
+                var dataLogin ={
+                    "userName" : userName,
+                    "password" : password
+                }
+                console.log(dataLogin);
+                $.ajax({
+                    type: "POST",
+                    url: "http://localhost:9090/ExpenseReimbursement/api/login",
+                    data: dataLogin, // serializes the form's elements.
+                    contentType:"application/json",
+                    success: function(data)
+                    {
+                        alert(data); // show response from the php script.
+                    },
+                    error: function(data){
+                        console.log(data);
+                    }
+                });
+            return false;
+            });
+        });
+        $("#LoginForm").submit( 
+            (e) => {
+                e.preventDefault(); // avoid to execute the actual submit of the form.
+                console.log("hello");
+
+        //     console.log("CLICKED")
+        //     
+        }
+        );
+    </script>
+    <title>Expense Reimbrusment Project</title>
+</head>
+<body>
+<div class="login row">
+    
+    <form action="#" class="col-md-6" id="LoginForm">
+        <h2>Login</h2>
+        <label for="in">User Name:</label>
+        <input type="text" id="login-usename">
+        <label for="pw">Password:</label>
+        <input type="password" id="login-password">
+        <input type ="submit" class="btn btn-success"/>
+    </form>
+    <form action="" class="col-md-6" id="RegisterForm">
+        <label for="in">User Name:</label>
+        <input type="text">
+        <label for="email">Email:</label>
+        <input type="text" name="email">
+        <label for="password">Password:</label>
+        <input type="password" name="password">
+        <button class="btn btn-success">Register</button>
+    </form>
+</div>
+    
+
+
+
+
+
+<div class="Manager row">
+    <div class="ManagerMain col-md-8">
+
+    </div>
+    <div class="ManagerSide col-md-4">
+
+    </div>
+</div>
+
+<div class="Employee">
+    <div class="EmployeeMain col-md-8">
+
+    </div>
+    <div class="EmployeeSide col-md-8">
+
+    </div>
+</div>
+
+</body>
+</html>

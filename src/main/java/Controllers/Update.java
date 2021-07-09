@@ -30,6 +30,7 @@ public class Update extends HttpServlet{
 		while  ((line = reader.readLine()) != null) {
 			json.append(line);
 		}
+		System.out.println(json);
 		JSONObject jsonObject = new JSONObject(json.toString());
 		
 	    // json file start hear 
