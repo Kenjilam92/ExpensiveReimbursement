@@ -148,7 +148,8 @@
         }
 
         //// register
-        function register(uN,eM,fN,lN,pw){
+  
+            
             $.ajax({
                 type: "POST",
                 url: "http://localhost:9090/ExpenseReimbursement/api/add?type=User",
@@ -170,7 +171,7 @@
                     console.log(data);
                 }
             });
-
+			
 
         }
 
@@ -189,7 +190,7 @@
             console.log(a,b);
                 $.ajax({
                     type: "POST",
-                    url: "http://localhost:9090/ExpenseReimbursement/api/login",
+                    url: "http://localhost:9090/ExpenseReimbursement/api/logi",
                     data: JSON.stringify({
 						userName : inp,
                     	password : pw			
@@ -265,7 +266,7 @@
             
             $.ajax({
                 type: "POST",
-                url: "http://localhost:9090/ExpenseReimbursement/api/update?type=Request",
+                url: "http://localhost:9090/ExpenseReimbursement/api/update?type=",
                 data: JSON.stringify({
                     userId: uId,
                     requestId : rId,
